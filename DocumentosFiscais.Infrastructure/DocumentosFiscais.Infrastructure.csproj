@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\NovaPasta\**" />
+    <EmbeddedResource Remove="Services\NovaPasta\**" />
+    <None Remove="Services\NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentosFiscais.Application\DocumentosFiscais.Application.csproj" />
+    <ProjectReference Include="..\DocumentosFiscais.Domain\DocumentosFiscais.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

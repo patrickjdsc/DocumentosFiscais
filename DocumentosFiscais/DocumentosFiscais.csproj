@@ -9,8 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocumentosFiscais.Application\DocumentosFiscais.Application.csproj" />
+    <ProjectReference Include="..\DocumentosFiscais.Domain\DocumentosFiscais.Domain.csproj" />
+    <ProjectReference Include="..\DocumentosFiscais.Infrastructure\DocumentosFiscais.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
