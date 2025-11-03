@@ -1,25 +1,26 @@
 ﻿using DocumentosFiscais.Application;
 using DocumentosFiscais.Infrastructure;
+using DocumentosFiscais.Infrastructure.Messaging;
+using DocumentosFiscais.Infrastructure.Messaging.Contratos;
+using DocumentosFiscais.Infrastructure.Models;
 using DocumentosFiscais.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
+
+builder.Services.Configure<ConfiguracoesRabbitMQ>(
+    builder.Configuration.GetSection("RabbitMQ"));
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
-builder.Services.AddPersistenceServices();
+builder.Services.AddPersistenceServices(builder.Configuration);
 
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
+ 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
