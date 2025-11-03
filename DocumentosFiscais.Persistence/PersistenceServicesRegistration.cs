@@ -29,7 +29,7 @@ namespace DocumentosFiscais.Persistence
                 return client.GetDatabase(settings.Database);
             });
 
-            services.AddScoped<IDocumentoFiscalRepository, DocumentFiscalRepository>();
+            services.AddScoped<IDocumentoFiscalRepository, DocumentoFiscalRepository>();
 
             return services;
         }
