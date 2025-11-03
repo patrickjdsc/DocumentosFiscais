@@ -18,6 +18,7 @@
     <ProjectReference Include="..\DocumentosFiscais.Application\DocumentosFiscais.Application.csproj" />
     <ProjectReference Include="..\DocumentosFiscais.Domain\DocumentosFiscais.Domain.csproj" />
     <ProjectReference Include="..\DocumentosFiscais.Infrastructure\DocumentosFiscais.Infrastructure.csproj" />
+    <ProjectReference Include="..\DocumentosFiscais.Persistence\DocumentosFiscais.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
