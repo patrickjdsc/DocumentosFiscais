@@ -10,6 +10,24 @@
 *.userosscache
 *.sln.docstates
 
+# --- DADOS DO MONGODB ---
+# Diretórios onde o Mongo armazena os arquivos do banco local
+/data/
+data/
+mongo-data/
+mongodb/
+mongodata/
+dump/
+*.bson
+*.json
+*.wt
+
+# --- DOCKER ---
+/docker-compose.override.yml
+/docker/mongo-data/
+*.pid
+*.sock
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
