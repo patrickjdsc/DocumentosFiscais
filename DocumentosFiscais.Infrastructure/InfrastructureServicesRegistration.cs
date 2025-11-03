@@ -1,4 +1,5 @@
-﻿using DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal;
+﻿using DocumentosFiscais.Application.Contracts.Services;
+using DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DocumentosFiscais.Infrastructure

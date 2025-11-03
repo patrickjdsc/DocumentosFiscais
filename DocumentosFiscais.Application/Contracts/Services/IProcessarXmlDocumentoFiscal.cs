@@ -1,6 +1,6 @@
 ﻿using DocumentosFiscais.Domain.Entities;
 
-namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal
+namespace DocumentosFiscais.Application.Contracts.Services
 {
     public interface IProcessarXmlDocumentoFiscal
     {

@@ -1,5 +1,5 @@
-﻿using DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal;
-using MediatR; 
+﻿using DocumentosFiscais.Application.Contracts.Services;
+using MediatR;
 
 namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.ReceberDocumentoFiscal
 {

@@ -1,4 +1,5 @@
-﻿using DocumentosFiscais.Domain.Entities;
+﻿using DocumentosFiscais.Application.Contracts.Services;
+using DocumentosFiscais.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
