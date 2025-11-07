@@ -4,7 +4,7 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Queries.ListarD
 {
     public class ListarDocumentosFiscaisResponse
     {
-        public ResultadoComPaginacao<Domain.Entities.DocumentoFiscal> DocumentosFiscais { get; set; } = new();
+        public ResultadoComPaginacao<DocumentoFiscalViewModel> DocumentosFiscais { get; set; } = new();
         public bool Sucesso { get; set; }
         public string Mensagem { get; set; } = string.Empty;
     }
