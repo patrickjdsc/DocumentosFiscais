@@ -7,7 +7,6 @@ using DocumentosFiscais.Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using DocumentosFiscais.Domain.Entities;
 
 namespace DocumentosFiscais.Controllers
 {
@@ -23,13 +22,11 @@ namespace DocumentosFiscais.Controllers
             _mediator = mediator;
         }
 
-        /// <summary>
-        /// Recebe e processa arquivos XML fiscais (NFe, CTe ou NFSe)
-        /// </summary>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CarregarDocumentoFiscal(IFormFile arquivo)
+        [ProducesResponseType(typeof(DocumentoFiscalViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CarregarDocumentoFiscal(
+            [Required(ErrorMessage = "Arquivo é obrigatório")] IFormFile arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
             {
@@ -55,16 +52,13 @@ namespace DocumentosFiscais.Controllers
 
             return BadRequest(response.Mensagem);
         }
-
-        /// <summary>
-        /// Lista documentos fiscais com paginação e filtros
-        /// </summary>
+         
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResultadoComPaginacao<DocumentoFiscalViewModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetDocumentosFiscais(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
+            [FromQuery] [Range(1, int.MaxValue)] int pageNumber = 1,
+            [FromQuery] [Range(1, 100)] int pageSize = 10,
             [FromQuery] DateTime? dataInicio = null,
             [FromQuery] DateTime? dataFim = null,
             [FromQuery] string? cnpjEmitente = null,
@@ -99,15 +93,13 @@ namespace DocumentosFiscais.Controllers
 
             return BadRequest(response.Mensagem);
         }
-
-        /// <summary>
-        /// Consulta detalhes de um documento fiscal específico
-        /// </summary>
+         
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetDocumentoFiscalById(string id)
+        [ProducesResponseType(typeof(DocumentoFiscalViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetDocumentoFiscalById(
+            [Required] string id)
         {
             var query = new ListarDocumentoPorIdQuery { Id = id };
             var response = await _mediator.Send(query);
@@ -124,15 +116,14 @@ namespace DocumentosFiscais.Controllers
 
             return BadRequest(response.Mensagem);
         }
-
-        /// <summary>
-        /// Atualiza um documento fiscal existente através do reprocessamento de um novo arquivo XML
-        /// </summary>
+         
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateDocumentoFiscal(string id, IFormFile arquivo)
+        [ProducesResponseType(typeof(DocumentoFiscalViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateDocumentoFiscal(
+            [Required] string id,
+            [Required(ErrorMessage = "Arquivo é obrigatório")] IFormFile arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
             {
@@ -168,15 +159,13 @@ namespace DocumentosFiscais.Controllers
 
             return BadRequest(response.Mensagem);
         }
-
-        /// <summary>
-        /// Exclui um documento fiscal
-        /// </summary>
+         
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteDocumentoFiscal(string id)
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteDocumentoFiscal(
+            [Required] string id)
         {
             var command = new DeletarDocumentoFiscalCommand { Id = id };
             var response = await _mediator.Send(command);
