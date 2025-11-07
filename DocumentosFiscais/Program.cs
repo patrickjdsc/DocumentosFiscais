@@ -4,13 +4,16 @@ using DocumentosFiscais.Infrastructure.Messaging;
 using DocumentosFiscais.Infrastructure.Messaging.Contratos;
 using DocumentosFiscais.Infrastructure.Models;
 using DocumentosFiscais.Persistence;
+using DocumentosFiscais.Persistence.Models;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.Configure<ConfiguracoesRabbitMQ>(
-    builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<ConfiguracoesMongoDB>(builder.Configuration.GetSection("MongoDb"));
+
+builder.Services.Configure<ConfiguracoesRabbitMQ>(builder.Configuration.GetSection("RabbitMQ"));
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();

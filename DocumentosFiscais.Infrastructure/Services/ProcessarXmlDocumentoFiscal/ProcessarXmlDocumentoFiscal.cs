@@ -1,5 +1,7 @@
-﻿using DocumentosFiscais.Application.Contracts.Services;
+﻿using DocumentosFiscais.Application.Contracts.Repositories;
+using DocumentosFiscais.Application.Contracts.Services;
 using DocumentosFiscais.Domain.Entities;
+using DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,76 +14,34 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal
 {
     public class ProcessarXmlDocumentoFiscal: IProcessarXmlDocumentoFiscal
     {
+
+        private readonly IEnumerable<IProcessarTipoDocumentoFiscal> _strategies;
+        private readonly IDocumentoFiscalRepository _documentoFiscalRepository; 
+
+        public ProcessarXmlDocumentoFiscal(IEnumerable<IProcessarTipoDocumentoFiscal> strategies, IDocumentoFiscalRepository documentoFiscalRepository)
+        {
+            _strategies = strategies;
+            _documentoFiscalRepository = documentoFiscalRepository;
+        }
+
         public async Task<DocumentoFiscal> Processar(string xml)
         {
-            DocumentoFiscal documentoFiscal = null;
-            if (xml.Contains("<NFe"))
+            if (string.IsNullOrWhiteSpace(xml))
+                throw new ArgumentException("XML não pode ser vazio ou nulo.", nameof(xml));
+
+            foreach (var strategy in _strategies)
             {
-                documentoFiscal = ProcessarNotaFiscalProduto(xml).Result;
+                if (await strategy.PodeProcessar(xml))
+                {
+                    var documento = await strategy.ProcessarXml(xml);
+
+                    await _documentoFiscalRepository.Inserir(documento);
+                     
+                    return documento;
+                }
             }
-            else if (xml.Contains("<CTe"))
-            {
-                documentoFiscal = ProcessarConhecimentoTransporte(xml).Result;
-            }
-            else if (xml.Contains("<nfse"))
-            {
-                documentoFiscal = ProcessarNotaFiscalServico(xml).Result;
-            }
-            else
-            {
-                throw new NotSupportedException("Tipo de documento fiscal não suportado.");
-            }
-            return documentoFiscal;
-        }
 
-        private async Task<DocumentoFiscal> ProcessarNotaFiscalProduto(string xml)
-        {
-            var notaFiscal = new XmlDocument();
-            notaFiscal.LoadXml(xml);
-
-            var nfe = new DocumentoFiscal
-            {
-                Chave = notaFiscal.SelectSingleNode("//infNFe").Attributes["Id"].Value.Replace("NFe", ""),
-                Emitente = notaFiscal.SelectSingleNode("//emit/xNome")?.InnerText,
-                Destinatario = notaFiscal.SelectSingleNode("//dest/xNome")?.InnerText,
-                DataEmissao = DateTime.Parse(notaFiscal.SelectSingleNode("//ide/dhEmi")?.InnerText ?? notaFiscal.SelectSingleNode("//ide/dEmi")?.InnerText),
-                ValorTotal = decimal.Parse(notaFiscal.SelectSingleNode("//total/ICMSTot/vNF")?.InnerText, CultureInfo.InvariantCulture),
-                Raw = xml
-            };
-
-            return nfe;
-        }
-
-        private async Task<DocumentoFiscal> ProcessarNotaFiscalServico(string xml)
-        {
-            var notaFiscalServico = new XmlDocument();
-            notaFiscalServico.LoadXml(xml);
-
-            var padraoUtilizado = "";
-
-            //criar método para descobrir qual o padrão será utilizado.
-            //Criar factory para cada padrão processando o XML
-
-            return new DocumentoFiscal();
-
-        }
-
-        private async Task<DocumentoFiscal> ProcessarConhecimentoTransporte(string xml)
-        {
-            var xmlCte = new XmlDocument();
-            xmlCte.LoadXml(xml);
-
-            var cte = new DocumentoFiscal
-            {
-                Chave = xmlCte.SelectSingleNode("//infCte").Attributes["Id"].Value.Replace("CTe", ""),
-                Emitente = xmlCte.SelectSingleNode("//emit/xNome")?.InnerText,
-                Destinatario = xmlCte.SelectSingleNode("//dest/xNome")?.InnerText,
-                DataEmissao = DateTime.Parse(xmlCte.SelectSingleNode("//ide/dhEmi")?.InnerText ?? xmlCte.SelectSingleNode("//ide/dEmi")?.InnerText),
-                ValorTotal = decimal.Parse(xmlCte.SelectSingleNode("//vPrest/vTPrest")?.InnerText, CultureInfo.InvariantCulture),
-                Raw = xml
-            };
-
-            return cte;
+            throw new NotSupportedException("Tipo de documento fiscal não suportado.");
         }
     }
 }

@@ -11,11 +11,7 @@ namespace DocumentosFiscais.Persistence
     public static class PersistenceServicesRegistration
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<ConfiguracoesMongoDB>(options =>
-                configuration.GetSection("MongoDb")
-            );
-
+        { 
             services.AddSingleton<IMongoClient>(sp =>
             {
                 var settings = sp.GetRequiredService<IOptions<ConfiguracoesMongoDB>>().Value;

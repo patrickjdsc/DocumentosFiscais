@@ -3,14 +3,12 @@ using MediatR;
 
 namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.ReceberDocumentoFiscal
 {
-    public class ReceberDocumentoFiscalHandler(IProcessarXmlDocumentoFiscal processarXmlDocumentoFiscal)
-
+    public class ReceberDocumentoFiscalHandler(IProcessarXmlDocumentoFiscal processarXmlDocumentoFiscal) 
         : IRequestHandler<ReceberDocumentoFiscalCommand, ReceberDocumentoFiscalResponse>
     {
 
         private readonly IProcessarXmlDocumentoFiscal _processarXmlDocumentoFiscal = processarXmlDocumentoFiscal;
-
-
+         
         public async Task<ReceberDocumentoFiscalResponse> Handle(ReceberDocumentoFiscalCommand request, CancellationToken cancellationToken)
         {
             try
@@ -24,7 +22,6 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.Recebe
                         Sucesso = false,
                         Mensagem = "Documento fiscal inválido ou não suportado."
                     };
-
                 }
                 else
                 {
@@ -42,7 +39,7 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.Recebe
                     Sucesso = false,
                     Mensagem = $"Erro ao processar o documento fiscal: {ex.Message}"
                 };
-            } 
+            }
         }
     }
 }
