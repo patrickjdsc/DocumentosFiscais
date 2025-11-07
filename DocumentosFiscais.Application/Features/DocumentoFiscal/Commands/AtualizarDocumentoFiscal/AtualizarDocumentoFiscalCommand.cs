@@ -4,7 +4,7 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.Update
 {
     public class AtualizarDocumentoFiscalCommand : IRequest<AtualizarDocumentoFiscalResponse>
     {
-        public string Id { get; set; }
-        public Domain.Entities.DocumentoFiscal DocumentoFiscal { get; set; } = new();
+        public string Id { get; set; } = string.Empty;
+        public string ArquivoXml { get; set; } = string.Empty;
     }
 }

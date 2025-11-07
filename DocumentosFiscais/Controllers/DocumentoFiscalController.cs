@@ -126,18 +126,32 @@ namespace DocumentosFiscais.Controllers
         }
 
         /// <summary>
-        /// Atualiza um documento fiscal existente
+        /// Atualiza um documento fiscal existente através do reprocessamento de um novo arquivo XML
         /// </summary>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateDocumentoFiscal(string id, [FromBody] DocumentoFiscal documentoFiscal)
-        { 
+        public async Task<IActionResult> UpdateDocumentoFiscal(string id, IFormFile arquivo)
+        {
+            if (arquivo == null || arquivo.Length == 0)
+            {
+                return BadRequest("Nenhum arquivo foi enviado.");
+            }
+
+            if (!arquivo.FileName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("O arquivo enviado não é um arquivo XML.");
+            }
+
+            using var stream = arquivo.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            var conteudo = await reader.ReadToEndAsync();
+
             var command = new AtualizarDocumentoFiscalCommand
             {
                 Id = id,
-                DocumentoFiscal = documentoFiscal
+                ArquivoXml = conteudo
             };
 
             var response = await _mediator.Send(command);
