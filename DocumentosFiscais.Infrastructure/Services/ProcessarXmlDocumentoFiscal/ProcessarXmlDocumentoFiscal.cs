@@ -35,7 +35,7 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal
                 }
             }
 
-            throw new NotSupportedException("Tipo de documento fiscal não suportado.");
+            throw new Exception("Tipo de documento fiscal não suportado.");
         }
     }
 }

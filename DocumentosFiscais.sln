@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentosFiscais.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentosFiscais.Persistence", "DocumentosFiscais.Persistence\DocumentosFiscais.Persistence.csproj", "{DA1B1B3E-A3F4-42F3-976E-BD3871EFFDF9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D6CCB399-55F7-4D70-BB2C-584200292EB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentosFiscais.UnitTests", "DocumentosFiscais.UnitTests\DocumentosFiscais.UnitTests.csproj", "{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,10 @@ Global
 		{DA1B1B3E-A3F4-42F3-976E-BD3871EFFDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA1B1B3E-A3F4-42F3-976E-BD3871EFFDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA1B1B3E-A3F4-42F3-976E-BD3871EFFDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +68,7 @@ Global
 		{DF538811-5553-4BDC-9B18-120EB01E896D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5AA8A383-922C-491A-A3FB-34D62B6ACAC5} = {E4299812-5970-4246-8F6D-76AA64396D32}
 		{DA1B1B3E-A3F4-42F3-976E-BD3871EFFDF9} = {E4299812-5970-4246-8F6D-76AA64396D32}
+		{C52B322E-BC48-4DA5-8E8C-A9E6F8FE88CE} = {D6CCB399-55F7-4D70-BB2C-584200292EB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C172D5E9-49E3-4063-8E2F-4B52E6DDDC33}
