@@ -7,5 +7,9 @@
         public string? CnpjEmitente { get; set; }
         public string? UfEmitente { get; set; }
         public string? Tipo { get; set; }
+
+        public string? Serie { get; set; }
+        public string? Numero { get; set; }
+
     }
 }

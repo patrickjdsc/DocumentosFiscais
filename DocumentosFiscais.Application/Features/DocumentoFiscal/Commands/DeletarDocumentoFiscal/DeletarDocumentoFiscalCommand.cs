@@ -4,6 +4,6 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.Delete
 {
     public class DeletarDocumentoFiscalCommand : IRequest<DeletarDocumentoFiscalResponse>
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
     }
 }

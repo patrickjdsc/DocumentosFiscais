@@ -7,9 +7,10 @@ namespace DocumentosFiscais.Application.Contracts.Repositories
     {
         Task<DocumentoFiscal> Inserir(DocumentoFiscal documentoFiscal);
         Task<ResultadoComPaginacao<DocumentoFiscal>> ListarDocumentos(int pageNumber, int pageSize, FiltroBuscaDocumentoFiscal? filters = null);
-        Task<DocumentoFiscal?> BuscarPorId(Guid id);
-        Task<DocumentoFiscal?> Atualizar(Guid id, DocumentoFiscal documentoFiscal);
-        Task<bool> Deletar(Guid id);
-        Task<bool> ExisteDocumentoFiscal(Guid id);
+        Task<DocumentoFiscal?> ListarDocumentoPorChave(string chave);
+        Task<DocumentoFiscal?> BuscarPorId(string id);
+        Task<DocumentoFiscal?> Atualizar(string id, DocumentoFiscal documentoFiscal);
+        Task<bool> Deletar(string id);
+        Task<bool> ExisteDocumentoFiscal(string id);
     }
 }

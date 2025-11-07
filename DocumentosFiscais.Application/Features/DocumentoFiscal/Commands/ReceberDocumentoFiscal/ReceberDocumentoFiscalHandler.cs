@@ -1,36 +1,49 @@
-﻿using DocumentosFiscais.Application.Contracts.Services;
+﻿using DocumentosFiscais.Application.Contracts.Repositories;
+using DocumentosFiscais.Application.Contracts.Services;
+using DocumentosFiscais.Application.Models;
 using MediatR;
 
 namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.ReceberDocumentoFiscal
 {
-    public class ReceberDocumentoFiscalHandler(IProcessarXmlDocumentoFiscal processarXmlDocumentoFiscal) 
+    public class ReceberDocumentoFiscalHandler(
+        IProcessarXmlDocumentoFiscal processarXmlDocumentoFiscal,
+        IDocumentoFiscalRepository documentoFiscalRepository )
         : IRequestHandler<ReceberDocumentoFiscalCommand, ReceberDocumentoFiscalResponse>
     {
 
         private readonly IProcessarXmlDocumentoFiscal _processarXmlDocumentoFiscal = processarXmlDocumentoFiscal;
-         
+        private readonly IDocumentoFiscalRepository _documentoFiscalRepository = documentoFiscalRepository;
+
         public async Task<ReceberDocumentoFiscalResponse> Handle(ReceberDocumentoFiscalCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var resultado = await _processarXmlDocumentoFiscal.Processar(request.ArquivoRecebido);
-
-                if (resultado is null)
+                var documentoProcessado = await _processarXmlDocumentoFiscal.Processar(request.ArquivoRecebido);
+                 
+                if (documentoProcessado is null)
                 {
-                    return new ReceberDocumentoFiscalResponse
-                    {
-                        Sucesso = false,
-                        Mensagem = "Documento fiscal inválido ou não suportado."
-                    };
+                    throw new Exception("Documento fiscal inválido ou não suportado.");
                 }
-                else
+
+                var documentoExistente = await _documentoFiscalRepository.ListarDocumentoPorChave(documentoProcessado.Chave);
+                
+                if (documentoExistente is not null)
                 {
                     return new ReceberDocumentoFiscalResponse
                     {
                         Sucesso = true,
-                        DocumentoFiscal = resultado
+                        DocumentoFiscal = documentoExistente
                     };
                 }
+
+                var documentoCriado = await _documentoFiscalRepository.Inserir(documentoProcessado);
+                 
+                return new ReceberDocumentoFiscalResponse
+                {
+                    Sucesso = true,
+                    DocumentoFiscal = documentoCriado
+                };
+
             }
             catch (Exception ex)
             {

@@ -4,6 +4,6 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Queries.GetDocu
 {
     public class ListarDocumentoPorIdQuery : IRequest<ListarDocumentoPorIdResponse>
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
     }
 }

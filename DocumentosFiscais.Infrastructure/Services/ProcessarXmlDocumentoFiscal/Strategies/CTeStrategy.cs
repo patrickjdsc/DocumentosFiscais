@@ -11,27 +11,63 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.
 {
     public class CTeStrategy : IProcessarTipoDocumentoFiscal
     {
+        private const string CTE_NAMESPACE = "http://www.portalfiscal.inf.br/cte";
+        private const string CTE_PREFIXO = "cte";
+
         public Task<bool> PodeProcessar(string xmlContent)
         {
-            return Task.FromResult(xmlContent.Contains("<NFe", StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(xmlContent))
+                return Task.FromResult(false);
+
+            var cteTag = "<" + CTE_PREFIXO;
+            var contemTagCte = xmlContent.ToLower().Contains(cteTag, StringComparison.OrdinalIgnoreCase);
+
+            return Task.FromResult(contemTagCte);
         }
 
-        public Task<DocumentoFiscal> ProcessarXml(string xml)
+        public Task<DocumentoFiscal> ProcessarXml(string xmlContent)
         {
-            var xmlCte = new XmlDocument();
-            xmlCte.LoadXml(xml);
+            XmlDocument conhecimentoTransporte = CarregarXmlDocument(xmlContent);
+            XmlNamespaceManager nsManager = CriarNamespaceManager(conhecimentoTransporte);
 
+            var chave = conhecimentoTransporte.SelectSingleNode("//cte:infCte", nsManager).Attributes["Id"].Value.Replace("CTe", "");
+            var emitente = conhecimentoTransporte.SelectSingleNode("//cte:emit/cte:CNPJ", nsManager)?.InnerText;
+            var destinatario = conhecimentoTransporte.SelectSingleNode("//cte:dest/cte:CNPJ", nsManager)?.InnerText ?? conhecimentoTransporte.SelectSingleNode("//cte:dest/cte:CPF", nsManager)?.InnerText;
+            var dataEmissaoText = conhecimentoTransporte.SelectSingleNode("//cte:ide/cte:dhEmi", nsManager)?.InnerText ?? conhecimentoTransporte.SelectSingleNode("//cte:ide/cte:dEmi", nsManager)?.InnerText;
+            var dataEmissao = dataEmissaoText is not null ? DateTime.Parse(dataEmissaoText) : DateTime.Now;
+            var numero = conhecimentoTransporte.SelectSingleNode("//cte:ide/cte:nCT", nsManager)?.InnerText;
+            var serie = conhecimentoTransporte.SelectSingleNode("//cte:ide/cte:serie", nsManager)?.InnerText;
+            var valorTotal = decimal.Parse(conhecimentoTransporte.SelectSingleNode("//cte:vPrest/cte:vTPrest", nsManager)?.InnerText, CultureInfo.InvariantCulture);
+            
             var cte = new DocumentoFiscal
             {
-                Chave = xmlCte.SelectSingleNode("//infCte").Attributes["Id"].Value.Replace("CTe", ""),
-                Emitente = xmlCte.SelectSingleNode("//emit/xNome")?.InnerText,
-                Destinatario = xmlCte.SelectSingleNode("//dest/xNome")?.InnerText,
-                DataEmissao = DateTime.Parse(xmlCte.SelectSingleNode("//ide/dhEmi")?.InnerText ?? xmlCte.SelectSingleNode("//ide/dEmi")?.InnerText),
-                ValorTotal = decimal.Parse(xmlCte.SelectSingleNode("//vPrest/vTPrest")?.InnerText, CultureInfo.InvariantCulture),
-                Raw = xml
+                Id = Guid.NewGuid().ToString().Replace("-", ""),
+                Tipo = "CTe",
+                Chave = chave,
+                CnpjEmitente = emitente,
+                Destinatario = destinatario,
+                DataEmissao = dataEmissao,
+                ValorTotal = valorTotal,
+                Numero = numero,
+                Serie = serie,
+                Raw = xmlContent
             };
 
             return Task.FromResult(cte);
+        }
+
+        private static XmlNamespaceManager CriarNamespaceManager(XmlDocument conhecimentoTransporte)
+        {
+            var nsManager = new XmlNamespaceManager(conhecimentoTransporte.NameTable);
+            nsManager.AddNamespace(CTE_PREFIXO, CTE_NAMESPACE);
+            return nsManager;
+        }
+
+        private static XmlDocument CarregarXmlDocument(string xmlContent)
+        {
+            var conhecimentoTransporte = new XmlDocument();
+            conhecimentoTransporte.LoadXml(xmlContent);
+            return conhecimentoTransporte;
         }
     }
 }

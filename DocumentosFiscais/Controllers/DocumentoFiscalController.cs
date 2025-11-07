@@ -105,11 +105,11 @@ namespace DocumentosFiscais.Controllers
         /// <summary>
         /// Consulta detalhes de um documento fiscal específico
         /// </summary>
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetDocumentoFiscalById(Guid id)
+        public async Task<IActionResult> GetDocumentoFiscalById(string id)
         {
             var query = new ListarDocumentoPorIdQuery { Id = id };
             var response = await _mediator.Send(query);
@@ -130,11 +130,11 @@ namespace DocumentosFiscais.Controllers
         /// <summary>
         /// Atualiza um documento fiscal existente
         /// </summary>
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateDocumentoFiscal(Guid id, [FromBody] DocumentoFiscal documentoFiscal)
+        public async Task<IActionResult> UpdateDocumentoFiscal(string id, [FromBody] DocumentoFiscal documentoFiscal)
         { 
             var command = new AtualizarDocumentoFiscalCommand
             {
@@ -160,11 +160,11 @@ namespace DocumentosFiscais.Controllers
         /// <summary>
         /// Exclui um documento fiscal
         /// </summary>
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteDocumentoFiscal(Guid id)
+        public async Task<IActionResult> DeleteDocumentoFiscal(string id)
         {
             var command = new DeletarDocumentoFiscalCommand { Id = id };
             var response = await _mediator.Send(command);

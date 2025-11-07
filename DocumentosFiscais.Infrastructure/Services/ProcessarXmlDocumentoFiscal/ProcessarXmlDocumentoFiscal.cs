@@ -12,31 +12,25 @@ using System.Xml;
 
 namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal
 {
-    public class ProcessarXmlDocumentoFiscal: IProcessarXmlDocumentoFiscal
+    public class ProcessarXmlDocumentoFiscal(
+        IEnumerable<IProcessarTipoDocumentoFiscal> processadoresTipoDocumentoFiscal, 
+        IDocumentoFiscalRepository documentoFiscalRepository
+        ) : IProcessarXmlDocumentoFiscal
     {
 
-        private readonly IEnumerable<IProcessarTipoDocumentoFiscal> _strategies;
-        private readonly IDocumentoFiscalRepository _documentoFiscalRepository; 
-
-        public ProcessarXmlDocumentoFiscal(IEnumerable<IProcessarTipoDocumentoFiscal> strategies, IDocumentoFiscalRepository documentoFiscalRepository)
-        {
-            _strategies = strategies;
-            _documentoFiscalRepository = documentoFiscalRepository;
-        }
+        private readonly IEnumerable<IProcessarTipoDocumentoFiscal> _ProcessadoresTipoDocumentoFiscal = processadoresTipoDocumentoFiscal;
+         
 
         public async Task<DocumentoFiscal> Processar(string xml)
         {
             if (string.IsNullOrWhiteSpace(xml))
                 throw new ArgumentException("XML não pode ser vazio ou nulo.", nameof(xml));
 
-            foreach (var strategy in _strategies)
+            foreach (var strategy in _ProcessadoresTipoDocumentoFiscal)
             {
                 if (await strategy.PodeProcessar(xml))
                 {
-                    var documento = await strategy.ProcessarXml(xml);
-
-                    await _documentoFiscalRepository.Inserir(documento);
-                     
+                    var documento = await strategy.ProcessarXml(xml);  
                     return documento;
                 }
             }

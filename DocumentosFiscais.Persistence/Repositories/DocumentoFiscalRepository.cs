@@ -1,7 +1,8 @@
 ﻿using DocumentosFiscais.Application.Contracts.Repositories;
+using DocumentosFiscais.Application.Models;
 using DocumentosFiscais.Domain.Entities;
 using DocumentosFiscais.Persistence.Models;
-using DocumentosFiscais.Application.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DocumentosFiscais.Persistence.Repositories
@@ -67,38 +68,46 @@ namespace DocumentosFiscais.Persistence.Repositories
             };
         }
 
-        public async Task<DocumentoFiscal?> BuscarPorId(Guid id)
+        public async Task<DocumentoFiscal?> BuscarPorId(string id)
         {
+            var objectId = new ObjectId(id);
+
             var document = await _documentoFiscalCollection
-                .Find(x => x.Id == id)
+                .Find(x => x.Id == objectId)
                 .FirstOrDefaultAsync();
 
             return document != null ? MapToEntity(document) : null;
         }
 
-        public async Task<DocumentoFiscal?> Atualizar(Guid id, DocumentoFiscal documentoFiscal)
+        public async Task<DocumentoFiscal?> Atualizar(string id, DocumentoFiscal documentoFiscal)
         {
             var updateDocument = MapFromEntity(documentoFiscal);
-            updateDocument.Id = id;
+
+            var objectId = new ObjectId(id);
+
+            updateDocument.Id = objectId;
 
             var result = await _documentoFiscalCollection
-                .ReplaceOneAsync(x => x.Id == id, updateDocument);
+                .ReplaceOneAsync(x => x.Id == objectId, updateDocument);
 
             return result.ModifiedCount > 0 ? documentoFiscal : null;
         }
 
-        public async Task<bool> Deletar(Guid id)
+        public async Task<bool> Deletar(string id)
         {
+            var objectId = new ObjectId(id);
+
             var result = await _documentoFiscalCollection
-                .DeleteOneAsync(x => x.Id == id);
+                .DeleteOneAsync(x => x.Id == objectId);
 
             return result.DeletedCount > 0;
         }
 
-        public async Task<bool> ExisteDocumentoFiscal(Guid id)
+        public async Task<bool> ExisteDocumentoFiscal(string id)
         {
+            var objectId = new ObjectId(id);
             var count = await _documentoFiscalCollection
-                .CountDocumentsAsync(x => x.Id == id);
+                .CountDocumentsAsync(x => x.Id.ToString() == id);
 
             return count > 0;
         }
@@ -107,13 +116,15 @@ namespace DocumentosFiscais.Persistence.Repositories
         {
             return new DocumentoFiscalPersistence
             {
-                Id = documentoFiscal.Id,
+                Id = new ObjectId(documentoFiscal.Id),
                 Tipo = documentoFiscal.Tipo,
                 Chave = documentoFiscal.Chave,
                 Destinatario = documentoFiscal.Destinatario,
-                Emitente = documentoFiscal.Emitente,
+                Emitente = documentoFiscal.CnpjEmitente,
                 DataEmissao = documentoFiscal.DataEmissao,
                 ValorTotal = documentoFiscal.ValorTotal,
+                Numero = documentoFiscal.Numero,
+                Serie = documentoFiscal.Serie,
                 Raw = documentoFiscal.Raw
             };
         }
@@ -122,15 +133,26 @@ namespace DocumentosFiscais.Persistence.Repositories
         {
             return new DocumentoFiscal
             {
-                Id = document.Id,
+                Id = document.Id.ToString(),
                 Tipo = document.Tipo,
                 Chave = document.Chave,
                 Destinatario = document.Destinatario,
-                Emitente = document.Emitente,
+                CnpjEmitente = document.Emitente,
                 DataEmissao = document.DataEmissao,
                 ValorTotal = document.ValorTotal,
+                Numero = document.Numero,
+                Serie = document.Serie,
                 Raw = document.Raw
             };
+        }
+
+        public async Task<DocumentoFiscal?> ListarDocumentoPorChave(string chave)
+        {
+            var document = await _documentoFiscalCollection
+                .Find(x => x.Chave == chave)
+                .FirstOrDefaultAsync();
+
+            return document != null ? MapToEntity(document) : null;
         }
     }
 }

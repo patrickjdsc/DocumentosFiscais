@@ -7,7 +7,7 @@ namespace DocumentosFiscais.Persistence.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public Guid Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public string Tipo { get; set; }
         public string Chave { get; set; }
@@ -15,6 +15,8 @@ namespace DocumentosFiscais.Persistence.Models
         public string Emitente { get; set; }
         public DateTime DataEmissao { get; set; }
         public decimal ValorTotal { get; set; }
+        public string Numero { get; set; }
+        public string Serie { get; set; }
         public string Raw { get; set; }
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]

@@ -24,7 +24,7 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.
             var nfe = new DocumentoFiscal
             {
                 Chave = notaFiscal.SelectSingleNode("//infNFe").Attributes["Id"].Value.Replace("NFe", ""),
-                Emitente = notaFiscal.SelectSingleNode("//emit/xNome")?.InnerText,
+                CnpjEmitente = notaFiscal.SelectSingleNode("//emit/xNome")?.InnerText,
                 Destinatario = notaFiscal.SelectSingleNode("//dest/xNome")?.InnerText,
                 DataEmissao = DateTime.Parse(notaFiscal.SelectSingleNode("//ide/dhEmi")?.InnerText ?? notaFiscal.SelectSingleNode("//ide/dEmi")?.InnerText),
                 ValorTotal = decimal.Parse(notaFiscal.SelectSingleNode("//total/ICMSTot/vNF")?.InnerText, CultureInfo.InvariantCulture),
