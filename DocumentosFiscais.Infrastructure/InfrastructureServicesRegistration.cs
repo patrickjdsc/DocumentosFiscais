@@ -18,7 +18,7 @@ namespace DocumentosFiscais.Infrastructure
             services.AddTransient<IProcessarTipoDocumentoFiscal, CTeStrategy>();
             services.AddTransient<IProcessarTipoDocumentoFiscal, NFSeStrategy>();
 
-            //services.AddHostedService<DocumentoFiscalConsumer>();
+            services.AddHostedService<DocumentoFiscalConsumer>();
             services.AddScoped<IProcessarXmlDocumentoFiscal, ProcessarXmlDocumentoFiscal>();
 
             return services;

@@ -29,7 +29,6 @@ namespace DocumentosFiscais.Persistence.Repositories
             var filterBuilder = Builders<DocumentoFiscalPersistence>.Filter;
             var filter = filterBuilder.Empty;
 
-            // Apply filters
             if (filters != null)
             {
                 if (filters.DataInicio.HasValue)
@@ -40,12 +39,13 @@ namespace DocumentosFiscais.Persistence.Repositories
 
                 if (!string.IsNullOrEmpty(filters.CnpjEmitente))
                     filter &= filterBuilder.Regex(x => x.Emitente, new MongoDB.Bson.BsonRegularExpression(filters.CnpjEmitente, "i"));
-
-                if (!string.IsNullOrEmpty(filters.UfEmitente))
-                    filter &= filterBuilder.Regex(x => x.Emitente, new MongoDB.Bson.BsonRegularExpression(filters.UfEmitente, "i"));
-
+                
                 if (!string.IsNullOrEmpty(filters.Tipo))
-                    filter &= filterBuilder.Eq(x => x.Tipo, filters.Tipo);
+                {
+                    var tipo = filters.Tipo.ToLower();
+                    filter &= filterBuilder.Eq(x => x.Tipo, tipo);
+
+                }
             }
 
             var totalCount = await _documentoFiscalCollection.CountDocumentsAsync(filter);

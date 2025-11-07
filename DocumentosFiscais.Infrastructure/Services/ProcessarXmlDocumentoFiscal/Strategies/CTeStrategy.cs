@@ -42,7 +42,7 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.
             var cte = new DocumentoFiscal
             {
                 Id = Guid.NewGuid().ToString().Replace("-", ""),
-                Tipo = "CTe",
+                Tipo = "cte",
                 Chave = chave,
                 CnpjEmitente = emitente,
                 Destinatario = destinatario,

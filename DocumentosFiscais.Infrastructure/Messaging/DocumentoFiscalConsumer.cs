@@ -5,52 +5,46 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace DocumentosFiscais.Infrastructure.Messaging
 {
-    internal class DocumentoFiscalConsumer : BackgroundService
-{
-    private readonly IRabbitMqConnection _connection;
+    public class DocumentoFiscalConsumer : BackgroundService
+    {
+        private readonly IRabbitMqConnection _conn;
         private readonly ConfiguracoesRabbitMQ _settings;
 
-        public DocumentoFiscalConsumer(IRabbitMqConnection connection, IOptions<ConfiguracoesRabbitMQ> options)
+        public DocumentoFiscalConsumer(IRabbitMqConnection conn, IOptions<ConfiguracoesRabbitMQ> opts)
         {
-            _connection = connection;
-            _settings = options.Value;
+            _conn = conn;
+            _settings = opts.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var channel = _connection.Channel;
+            await _conn.InitializeAsync();
+            var channel = _conn.Channel;
             var consumer = new AsyncEventingBasicConsumer(channel);
 
-            consumer.ReceivedAsync += async (sender, ea) => 
+            consumer.ReceivedAsync += async (sender, ea) =>
             {
                 try
                 {
-                    var json = Encoding.UTF8.GetString(ea.Body.ToArray());
-                    var message = JsonSerializer.Deserialize<DocumentoFiscal>(json);
-                     
+                    var bytes = ea.Body.ToArray();
+                    var msg = System.Text.Json.JsonSerializer.Deserialize<DocumentoFiscal>(bytes)!;
+
+                    await ProcessMessageAsync(msg);
                     await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
                 }
                 catch (Exception ex)
                 {
-                     await channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true);
+                    await channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true);
                 }
             };
 
-            await channel.BasicConsumeAsync(
-                queue: _settings.Queue,
-                autoAck: false,
-                consumer: consumer,
-                cancellationToken: stoppingToken
-            );
-        } 
+
+            await channel.BasicConsumeAsync(queue: _settings.Queue, autoAck: false, consumer: consumer, cancellationToken: stoppingToken);
+        }
+
+        private Task ProcessMessageAsync(DocumentoFiscal msg) { /* ... */ return Task.CompletedTask; }
     }
-} 
+}

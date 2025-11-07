@@ -25,6 +25,8 @@ namespace DocumentosFiscais.Infrastructure.Messaging
 
         public async Task PublicarAsync(DocumentoFiscal message)
         {
+            await _connection.InitializeAsync();
+
             var json = JsonSerializer.Serialize(message);
             var body = Encoding.UTF8.GetBytes(json);
             var props = new BasicProperties();

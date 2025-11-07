@@ -1,18 +1,21 @@
 ﻿using DocumentosFiscais.Application.Contracts.Repositories;
 using DocumentosFiscais.Application.Contracts.Services;
 using DocumentosFiscais.Application.Models;
+using DocumentosFiscais.Infrastructure.Messaging.Contratos;
 using MediatR;
 
 namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.ReceberDocumentoFiscal
 {
     public class ReceberDocumentoFiscalHandler(
         IProcessarXmlDocumentoFiscal processarXmlDocumentoFiscal,
-        IDocumentoFiscalRepository documentoFiscalRepository )
+        IDocumentoFiscalRepository documentoFiscalRepository,
+        IDocumentoFiscalPublisher documentoFiscalPublisher)
         : IRequestHandler<ReceberDocumentoFiscalCommand, ReceberDocumentoFiscalResponse>
     {
 
         private readonly IProcessarXmlDocumentoFiscal _processarXmlDocumentoFiscal = processarXmlDocumentoFiscal;
         private readonly IDocumentoFiscalRepository _documentoFiscalRepository = documentoFiscalRepository;
+        private readonly IDocumentoFiscalPublisher _documentoFiscalPublisher = documentoFiscalPublisher;
 
         public async Task<ReceberDocumentoFiscalResponse> Handle(ReceberDocumentoFiscalCommand request, CancellationToken cancellationToken)
         {
@@ -37,7 +40,7 @@ namespace DocumentosFiscais.Application.Features.DocumentoFiscal.Commands.Recebe
                 }
 
                 var documentoCriado = await _documentoFiscalRepository.Inserir(documentoProcessado);
-                 
+                await _documentoFiscalPublisher.PublicarAsync(documentoCriado);
                 return new ReceberDocumentoFiscalResponse
                 {
                     Sucesso = true,

@@ -68,7 +68,6 @@ namespace DocumentosFiscais.Controllers
             [FromQuery] DateTime? dataInicio = null,
             [FromQuery] DateTime? dataFim = null,
             [FromQuery] string? cnpjEmitente = null,
-            [FromQuery] string? ufEmitente = null,
             [FromQuery] string? tipo = null)
         {
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
@@ -81,7 +80,6 @@ namespace DocumentosFiscais.Controllers
                 DataInicio = dataInicio,
                 DataFim = dataFim,
                 CnpjEmitente = cnpjEmitente,
-                UfEmitente = ufEmitente,
                 Tipo = tipo
             };
 

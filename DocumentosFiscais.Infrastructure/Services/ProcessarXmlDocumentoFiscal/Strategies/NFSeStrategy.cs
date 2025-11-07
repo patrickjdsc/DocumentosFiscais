@@ -57,7 +57,7 @@ namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.
             var nfse = new DocumentoFiscal
             {
                 Id = Guid.NewGuid().ToString().Replace("-", ""),
-                Tipo = "NFSe",
+                Tipo = "nfse",
                 Chave = chave,
                 CnpjEmitente = emitente,
                 Destinatario = destinatario,
