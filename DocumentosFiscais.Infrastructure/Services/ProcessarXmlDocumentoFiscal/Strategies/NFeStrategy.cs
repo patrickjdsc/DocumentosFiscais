@@ -1,10 +1,5 @@
-﻿using DocumentosFiscais.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DocumentosFiscais.Domain.Entities; 
+using System.Globalization; 
 using System.Xml;
 
 namespace DocumentosFiscais.Infrastructure.Services.ProcessarXmlDocumentoFiscal.Strategies
